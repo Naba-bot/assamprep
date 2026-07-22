@@ -1,74 +1,58 @@
-import Link from "next/link";
-import { apscAEMockTests } from "@/constants/mockTests";
+import { exams } from "@/data/exams";
+import SubjectList from "@/components/exams/SubjectList";
+import MockTestCard from "@/components/exams/MockTestCard";
 
-export default function APSCAEElectricalPage() {
-  return (
-    <main className="mx-auto max-w-7xl px-6 py-12">
-      <div className="rounded-2xl bg-green-700 p-8 text-white">
-        <span className="rounded-full bg-white/20 px-4 py-1 text-sm">
-          APSC
-        </span>
+const subjects = [
+  "Electrical Machines",
+  "Power Systems",
+  "Network Theory",
+  "Measurements",
+  "Control Systems",
+  "Power Electronics",
+  "Electrical Circuits",
+];
 
-        <h1 className="mt-4 text-4xl font-bold">
-          Assistant Engineer (Electrical)
-        </h1>
+const exam = exams.find(
+  (e) => e.slug === "apsc-ae-electrical"
+);
 
-        <p className="mt-3 text-lg text-green-100">
-          Practice full-length mock tests based on the latest syllabus and exam
-          pattern.
+export default function ApscAeElectricalPage() {
+  if (!exam) {
+    return (
+      <div className="mx-auto max-w-7xl px-6 py-12">
+        <h1 className="text-3xl font-bold">Exam Not Found</h1>
+        <p className="mt-4 text-gray-600">
+          The requested exam could not be found.
         </p>
       </div>
+    );
+  }
 
-      <section className="mt-10 grid gap-6 md:grid-cols-4">
-        <div className="rounded-xl border p-6 text-center">
-          <h3 className="text-3xl font-bold">3</h3>
-          <p className="text-gray-600">Mock Tests</p>
-        </div>
+  return (
+    <div className="mx-auto max-w-7xl px-6 py-12">
+      <h1 className="text-4xl font-bold">{exam.title}</h1>
 
-        <div className="rounded-xl border p-6 text-center">
-          <h3 className="text-3xl font-bold">100</h3>
-          <p className="text-gray-600">Questions</p>
-        </div>
+      <p className="mt-4 max-w-3xl text-gray-600">
+        {exam.description}
+      </p>
 
-        <div className="rounded-xl border p-6 text-center">
-          <h3 className="text-3xl font-bold">120</h3>
-          <p className="text-gray-600">Minutes</p>
-        </div>
-
-        <div className="rounded-xl border p-6 text-center">
-          <h3 className="text-3xl font-bold">Latest</h3>
-          <p className="text-gray-600">Exam Pattern</p>
-        </div>
-      </section>
+      <SubjectList subjects={subjects} />
 
       <section className="mt-14">
-        <h2 className="text-3xl font-bold">Available Mock Tests</h2>
+        <h2 className="text-2xl font-bold">Available Mock Tests</h2>
 
-        <div className="mt-8 space-y-5">
-          {apscAEMockTests.map((test) => (
-            <div
+        <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {exam.mockTests.map((test) => (
+            <MockTestCard
               key={test.id}
-              className="flex items-center justify-between rounded-xl border p-6"
-            >
-              <div>
-                <h3 className="text-xl font-semibold">{test.title}</h3>
-
-                <p className="mt-2 text-gray-600">
-                  {test.questions} Questions • {test.duration} Minutes •{" "}
-                  {test.difficulty}
-                </p>
-              </div>
-
-              <Link
-  href={`/mock-test/${test.id}/instructions`}
-  className="rounded-lg bg-green-700 px-6 py-3 text-white hover:bg-green-800"
->
-  Start Test
-</Link>
-            </div>
+              title={test.title}
+              questions={test.totalQuestions}
+              duration={test.duration}
+              href={`/mock-test/${test.id}/instructions`}
+            />
           ))}
         </div>
       </section>
-    </main>
+    </div>
   );
 }

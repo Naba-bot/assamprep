@@ -9,16 +9,15 @@ import QuestionCard from "@/components/mock-test/QuestionCard";
 import NavigationButtons from "@/components/mock-test/NavigationButtons";
 import QuestionPalette from "@/components/mock-test/QuestionPalette";
 import SubmitDialog from "@/components/mock-test/SubmitDialog";
-
-import { aeFull1Questions } from "@/data/questions/ae-full-1";
+import { loadQuestions } from "@/lib/loadQuestions";
 import { calculateResult } from "@/lib/result";
 
 export default function MockTestPage() {
   const { testId } = useParams();
   const router = useRouter();
-
-  const questions = aeFull1Questions;
-
+  const questions = useMemo(() => {
+    return loadQuestions(testId as string);
+  }, [testId]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [reviewQuestions, setReviewQuestions] = useState<number[]>([]);
@@ -77,15 +76,33 @@ export default function MockTestPage() {
       testId as string,
       7200
     );
-
+  
     localStorage.setItem(
       "latestResult",
       JSON.stringify(result)
     );
-
+  
+    localStorage.setItem(
+      "latestAnswers",
+      JSON.stringify(answers)
+    );
+  
+    const history = JSON.parse(
+      localStorage.getItem("testHistory") || "[]"
+    );
+  
+    history.unshift({
+      ...result,
+      date: new Date().toLocaleString(),
+    });
+  
+    localStorage.setItem(
+      "testHistory",
+      JSON.stringify(history)
+    );
+  
     router.push(`/mock-test/${testId}/result`);
   };
-
   return (
     <ProtectedRoute>
       <main className="mx-auto max-w-7xl px-6 py-10">

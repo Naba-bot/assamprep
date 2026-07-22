@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Mail, Lock } from "lucide-react";
 
 import AuthCard from "@/components/auth/AuthCard";
 import { signInWithGoogle } from "@/lib/auth";
@@ -11,7 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const redirect = searchParams.get("redirect") || "/";
+  const redirect = searchParams.get("redirect") || "/dashboard";
 
   const handleGoogleLogin = async () => {
     try {
@@ -26,12 +24,12 @@ export default function LoginPage() {
   return (
     <AuthCard
       title="Login"
-      subtitle="Login to continue your preparation"
+      subtitle="Continue with your Google account to access AssamPrep."
     >
       <button
         type="button"
         onClick={handleGoogleLogin}
-        className="mb-6 flex w-full items-center justify-center gap-3 rounded-lg border py-3 font-medium transition hover:bg-gray-50"
+        className="flex w-full items-center justify-center gap-3 rounded-lg border py-3 font-medium transition hover:bg-gray-50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -61,64 +59,8 @@ export default function LoginPage() {
         Continue with Google
       </button>
 
-      <div className="mb-6 flex items-center">
-        <div className="h-px flex-1 bg-gray-300"></div>
-        <span className="px-4 text-sm text-gray-500">OR</span>
-        <div className="h-px flex-1 bg-gray-300"></div>
-      </div>
-
-      <form className="space-y-5">
-        <div className="relative">
-          <Mail
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
-          />
-
-          <input
-            type="email"
-            placeholder="Email Address"
-            className="w-full rounded-lg border py-3 pl-11 pr-4 outline-none focus:border-green-700"
-          />
-        </div>
-
-        <div className="relative">
-          <Lock
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full rounded-lg border py-3 pl-11 pr-4 outline-none focus:border-green-700"
-          />
-        </div>
-
-        <div className="text-right">
-          <Link
-            href="/forgot-password"
-            className="text-sm text-green-700 hover:underline"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-green-700 py-3 font-semibold text-white transition hover:bg-green-800"
-        >
-          Login
-        </button>
-      </form>
-
-      <p className="mt-8 text-center text-gray-600">
-        Don't have an account?{" "}
-        <Link
-          href="/register"
-          className="font-semibold text-green-700 hover:underline"
-        >
-          Create Account
-        </Link>
+      <p className="mt-6 text-center text-sm text-gray-500">
+        More sign-in options, including email/password, will be available soon.
       </p>
     </AuthCard>
   );

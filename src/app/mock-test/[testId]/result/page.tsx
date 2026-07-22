@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -8,28 +9,25 @@ import { TestResult } from "@/types/result";
 export default function ResultPage() {
   const { testId } = useParams();
 
-  /*
-    Temporary demo data.
-    Later this will come from localStorage / Firestore.
-  */
-    const [result, setResult] = useState<TestResult | null>(null);
+  const [result, setResult] = useState<TestResult | null>(null);
 
-    useEffect(() => {
-      const stored = localStorage.getItem("latestResult");
-    
-      if (stored) {
-        setResult(JSON.parse(stored));
-      }
-    }, []);
-    if (!result) {
-        return (
-          <main className="mx-auto max-w-4xl p-10">
-            <h1 className="text-center text-2xl font-bold">
-              Loading Result...
-            </h1>
-          </main>
-        );
-      }
+  useEffect(() => {
+    const stored = localStorage.getItem("latestResult");
+
+    if (stored) {
+      setResult(JSON.parse(stored));
+    }
+  }, []);
+
+  if (!result) {
+    return (
+      <main className="mx-auto max-w-4xl p-10">
+        <h1 className="text-center text-2xl font-bold">
+          Loading Result...
+        </h1>
+      </main>
+    );
+  }
 
   const hours = Math.floor(result.timeTaken / 3600);
   const minutes = Math.floor((result.timeTaken % 3600) / 60);
@@ -129,8 +127,13 @@ export default function ResultPage() {
 
           <div className="rounded-lg border p-5 text-center">
             <p className="text-gray-500">Rank</p>
-            <p className="mt-2 text-3xl font-bold text-yellow-600">
-              #12
+
+            <p className="mt-2 text-2xl font-bold text-yellow-600">
+              Coming Soon 🚀
+            </p>
+
+            <p className="mt-2 text-sm text-gray-500">
+              Leaderboard will be available in a future update.
             </p>
           </div>
 
@@ -147,19 +150,21 @@ export default function ResultPage() {
             Review Answers
           </Link>
 
-          <Link
-            href={`/mock-test/${testId}/leaderboard`}
+          <button
+            onClick={() =>
+              alert("🏆 Leaderboard is coming soon!")
+            }
             className="rounded-lg bg-blue-700 px-6 py-3 text-white hover:bg-blue-800"
           >
-            Show Rank
-          </Link>
+            Leaderboard (Coming Soon)
+          </button>
 
           <Link
-            href="/mock-test"
+            href="/dashboard"
             className="rounded-lg border px-6 py-3 hover:bg-gray-100"
           >
-            Back to Mock Tests
-          </Link> 
+            Back to Dashboard
+          </Link>
 
         </div>
 

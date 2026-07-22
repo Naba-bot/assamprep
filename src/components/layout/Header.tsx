@@ -19,23 +19,23 @@ export default function Header() {
         <NavLinks />
 
         {loading ? null : user ? (
-          <UserMenu />
-        ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Link
-              href="/login"
+              href="/dashboard"
               className="rounded-md border border-green-700 px-4 py-2 text-green-700 transition hover:bg-green-50"
             >
-              Login
+              Dashboard
             </Link>
 
-            <Link
-              href="/register"
-              className="rounded-md bg-green-700 px-4 py-2 text-white transition hover:bg-green-800"
-            >
-              Sign Up
-            </Link>
+            <UserMenu />
           </div>
+        ) : (
+          <Link
+            href="/login"
+            className="rounded-md border border-green-700 px-4 py-2 text-green-700 transition hover:bg-green-50"
+          >
+            Login
+          </Link>
         )}
       </div>
     </header>
