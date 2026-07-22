@@ -46,7 +46,7 @@ export default function ApscAeElectricalPage() {
             <MockTestCard
               key={test.id}
               title={test.title}
-              questions={test.Questions}
+              questions={test.questions}
               duration={test.duration}
               href={`/mock-test/${test.id}/instructions`}
             />
