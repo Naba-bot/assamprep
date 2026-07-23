@@ -1,18 +1,18 @@
-const result = {
-  id: crypto.randomUUID(),
+export interface TestResult {
+  id?: string;
 
-  testId,
-  date: new Date().toLocaleString(),
+  testId: string;
+  date?: string;
 
-  score,
-  correct,
-  wrong,
-  skipped,
+  totalQuestions: number;
 
-  totalQuestions,
+  correct: number;
+  wrong: number;
+  unanswered: number;
 
-  percentage,
-  accuracy,
+  score: number;
+  percentage: number;
+  accuracy: number;
 
-  timeTaken,
-};
+  timeTaken: number;
+}
