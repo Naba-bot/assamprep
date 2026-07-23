@@ -11,7 +11,23 @@ export default function Timer({
   minutes,
   onTimeUp,
 }: TimerProps) {
-  const [timeLeft, setTimeLeft] = useState(minutes * 60);
+  const getInitialTime = () => {
+    const totalSeconds = minutes * 60;
+  
+    const startTime = localStorage.getItem("testStartTime");
+  
+    if (!startTime) {
+      return totalSeconds;
+    }
+  
+    const elapsed = Math.floor(
+      (Date.now() - Number(startTime)) / 1000
+    );
+  
+    return Math.max(totalSeconds - elapsed, 0);
+  };
+  
+  const [timeLeft, setTimeLeft] = useState(getInitialTime);
 
   useEffect(() => {
     if (timeLeft <= 0) {

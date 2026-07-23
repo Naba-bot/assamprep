@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { aeFull1Questions } from "@/data/questions/apsc-ae-electrical/ae-full-1";
 
 export default function ReviewPage() {
+  const router = useRouter();
+
   const [answers, setAnswers] = useState<Record<number, number>>({});
 
   useEffect(() => {
@@ -32,14 +35,13 @@ export default function ReviewPage() {
               key={question.id}
               className="rounded-xl border bg-white p-6 shadow"
             >
-              <h2 className="font-semibold">
+              <h2 className="font-semibold text-lg">
                 Q{index + 1}. {question.question}
               </h2>
 
               <div className="mt-4 space-y-3">
                 {question.options.map((option, optionIndex) => {
-                  let classes =
-                    "rounded-lg border p-3";
+                  let classes = "rounded-lg border p-3";
 
                   if (optionIndex === correct) {
                     classes +=
@@ -65,7 +67,7 @@ export default function ReviewPage() {
                 })}
               </div>
 
-              <div className="mt-4 text-sm">
+              <div className="mt-4 text-sm space-y-2">
                 <p>
                   Your Answer:{" "}
                   <strong>
@@ -75,24 +77,57 @@ export default function ReviewPage() {
                   </strong>
                 </p>
 
-                <p className="mt-1">
+                <p>
                   Correct Answer:{" "}
                   <strong className="text-green-700">
                     {question.options[correct]}
                   </strong>
                 </p>
+
+                {question.subject && (
+                  <p>
+                    Subject:{" "}
+                    <strong>{question.subject}</strong>
+                  </p>
+                )}
+
+                {question.difficulty && (
+                  <p>
+                    Difficulty:{" "}
+                    <strong>{question.difficulty}</strong>
+                  </p>
+                )}
+
+                {question.explanation && (
+                  <div className="mt-4 rounded-lg bg-blue-50 p-4">
+                    <p className="font-semibold text-blue-700">
+                      Explanation
+                    </p>
+
+                    <p className="mt-2">
+                      {question.explanation}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="mt-10">
-        <Link
-          href="/mock-test"
-          className="rounded-lg bg-green-700 px-6 py-3 text-white hover:bg-green-800"
+      <div className="mt-10 flex flex-wrap gap-4">
+        <button
+          onClick={() => router.back()}
+          className="rounded-lg bg-gray-700 px-6 py-3 text-white transition hover:bg-gray-800"
         >
-          Back to Mock Tests
+          ← Back to Result
+        </button>
+
+        <Link
+          href="/exams"
+          className="rounded-lg bg-green-700 px-6 py-3 text-white transition hover:bg-green-800"
+        >
+          📚 More Mock Tests
         </Link>
       </div>
     </main>

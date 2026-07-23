@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -9,22 +9,59 @@ import QuestionCard from "@/components/mock-test/QuestionCard";
 import NavigationButtons from "@/components/mock-test/NavigationButtons";
 import QuestionPalette from "@/components/mock-test/QuestionPalette";
 import SubmitDialog from "@/components/mock-test/SubmitDialog";
-import { loadQuestions } from "@/lib/loadQuestions";
+import { loadTest } from "@/lib/loadQuestions";
 import { calculateResult } from "@/lib/result";
 
 export default function MockTestPage() {
   const { testId } = useParams();
   const router = useRouter();
-  const questions = useMemo(() => {
-    return loadQuestions(testId as string);
+  const hasSubmitted = useRef(false);
+  const { config, questions } = useMemo(() => {
+    return loadTest(testId as string);
   }, [testId]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [reviewQuestions, setReviewQuestions] = useState<number[]>([]);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
-
   const question = questions[currentQuestion];
-
+  
+  useEffect(() => {
+    const existingStartTime = localStorage.getItem("testStartTime");
+  
+    if (!existingStartTime) {
+      localStorage.setItem(
+        "testStartTime",
+        Date.now().toString()
+      );
+    }
+  
+    const savedProgress = localStorage.getItem(
+      `testProgress-${testId}`
+    );
+  
+    if (savedProgress) {
+      const progress = JSON.parse(savedProgress);
+  
+      setAnswers(progress.answers || {});
+      setCurrentQuestion(progress.currentQuestion || 0);
+      setReviewQuestions(progress.reviewQuestions || []);
+    }
+  }, [testId]);
+  useEffect(() => {
+    localStorage.setItem(
+      `testProgress-${testId}`,
+      JSON.stringify({
+        answers,
+        currentQuestion,
+        reviewQuestions,
+      })
+    );
+  }, [
+    answers,
+    currentQuestion,
+    reviewQuestions,
+    testId,
+  ]);
   const answeredCount = useMemo(
     () => Object.keys(answers).length,
     [answers]
@@ -70,11 +107,22 @@ export default function MockTestPage() {
   };
 
   const handleSubmit = () => {
+    if (hasSubmitted.current) return;
+
+    hasSubmitted.current = true;
+    const startTime = Number(localStorage.getItem("testStartTime"));
+  
+    const endTime = Date.now();
+  
+    const timeTakenSeconds = Math.floor(
+      (endTime - startTime) / 1000
+    );
+  
     const result = calculateResult(
       questions,
       answers,
       testId as string,
-      7200
+      timeTakenSeconds
     );
   
     localStorage.setItem(
@@ -92,8 +140,15 @@ export default function MockTestPage() {
     );
   
     history.unshift({
+      id: crypto.randomUUID(),
+    
       ...result,
+    
       date: new Date().toLocaleString(),
+    
+      answers,
+    
+      questions,
     });
   
     localStorage.setItem(
@@ -101,17 +156,22 @@ export default function MockTestPage() {
       JSON.stringify(history)
     );
   
-    router.push(`/mock-test/${testId}/result`);
+    localStorage.removeItem("testStartTime");
+    localStorage.removeItem(
+      `testProgress-${testId}`
+    );
+    router.replace(`/mock-test/${testId}/result`);
   };
   return (
     <ProtectedRoute>
       <main className="mx-auto max-w-7xl px-6 py-10">
-        <MockTestHeader
-          title={`Mock Test: ${testId}`}
-          candidateName="Candidate"
-          totalQuestions={questions.length}
-          duration={120}
-        />
+      <MockTestHeader
+  title={config.title}
+  candidateName="Candidate"
+  totalQuestions={config.totalQuestions}
+duration={config.duration}
+  onTimeUp={handleSubmit}
+      />
 
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">

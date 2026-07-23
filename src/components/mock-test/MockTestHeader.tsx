@@ -7,6 +7,7 @@ interface MockTestHeaderProps {
   candidateName: string;
   totalQuestions: number;
   duration: number;
+  onTimeUp?: () => void;
 }
 
 export default function MockTestHeader({
@@ -14,6 +15,7 @@ export default function MockTestHeader({
   candidateName,
   totalQuestions,
   duration,
+  onTimeUp,
 }: MockTestHeaderProps) {
   return (
     <header className="mb-8 rounded-xl border bg-white p-6 shadow">
@@ -47,7 +49,10 @@ export default function MockTestHeader({
           </p>
 
           <div className="mt-4">
-            <Timer minutes={duration} />
+          <Timer
+  minutes={duration}
+  onTimeUp={onTimeUp}
+          />
           </div>
         </div>
       </div>

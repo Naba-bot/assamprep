@@ -1,11 +1,18 @@
-export interface TestResult {
-    testId: string;
-    totalQuestions: number;
-    correct: number;
-    wrong: number;
-    unanswered: number;
-    score: number;
-    percentage: number;
-    accuracy: number;
-    timeTaken: number; // seconds
-  }
+const result = {
+  id: crypto.randomUUID(),
+
+  testId,
+  date: new Date().toLocaleString(),
+
+  score,
+  correct,
+  wrong,
+  skipped,
+
+  totalQuestions,
+
+  percentage,
+  accuracy,
+
+  timeTaken,
+};

@@ -1,5 +1,6 @@
 import { Question } from "@/types/question";
 import { TestResult } from "@/types/result";
+import { loadTest } from "@/lib/loadQuestions";
 
 export function calculateResult(
   questions: Question[],
@@ -7,6 +8,8 @@ export function calculateResult(
   testId: string,
   timeTaken: number
 ): TestResult {
+  const { config } = loadTest(testId);
+
   let correct = 0;
   let wrong = 0;
 
@@ -23,6 +26,13 @@ export function calculateResult(
   });
 
   const unanswered = questions.length - correct - wrong;
+
+  const score = Number(
+    (
+      correct * config.marksPerCorrect -
+      wrong * config.negativeMark
+    ).toFixed(2)
+  );
 
   const percentage = Number(
     ((correct / questions.length) * 100).toFixed(2)
@@ -41,7 +51,7 @@ export function calculateResult(
     correct,
     wrong,
     unanswered,
-    score: correct,
+    score,
     percentage,
     accuracy,
     timeTaken,

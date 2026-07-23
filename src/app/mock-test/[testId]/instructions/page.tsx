@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 
 export default function InstructionsPage() {
   const { testId } = useParams();
+  const router = useRouter();
+  const [agreed, setAgreed] = useState(false);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
@@ -14,13 +16,21 @@ export default function InstructionsPage() {
         </h1>
 
         <div className="space-y-4 text-gray-700">
-          <p>📝 Total Questions: <strong>100</strong></p>
+          <p>
+            📝 Total Questions: <strong>20</strong>
+          </p>
 
-          <p>⏱ Duration: <strong>120 Minutes</strong></p>
+          <p>
+            ⏱ Duration: <strong>10 Minutes</strong>
+          </p>
 
-          <p>✅ Correct Answer: <strong>+1 Mark</strong></p>
+          <p>
+            ✅ Correct Answer: <strong>+1 Mark</strong>
+          </p>
 
-          <p>❌ Negative Marking: <strong>No</strong></p>
+          <p>
+            ✅ Negative Marking: <strong>-0.25 Mark</strong>
+          </p>
 
           <p>
             Do not refresh the browser while taking the test.
@@ -32,19 +42,36 @@ export default function InstructionsPage() {
         </div>
 
         <div className="mt-8 flex items-center gap-2">
-          <input id="agree" type="checkbox" />
+          <input
+            id="agree"
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="h-4 w-4"
+          />
 
-          <label htmlFor="agree">
+          <label htmlFor="agree" className="text-gray-700">
             I have read and understood the instructions.
           </label>
         </div>
 
-        <Link
-          href={`/mock-test/${testId}`}
-          className="mt-8 inline-block rounded-lg bg-green-700 px-6 py-3 text-white hover:bg-green-800"
+        
+          <button
+          onClick={() => {
+            if (!agreed) return;
+        
+            router.replace(`/mock-test/${testId}`);
+          }}
+          disabled={!agreed}
+          className={`mt-8 rounded-lg px-6 py-3 text-white transition ${
+            agreed
+              ? "bg-green-700 hover:bg-green-800"
+              : "cursor-not-allowed bg-gray-400"
+          }`}
         >
           Start Test
-        </Link>
+        </button>
+        
       </div>
     </main>
   );

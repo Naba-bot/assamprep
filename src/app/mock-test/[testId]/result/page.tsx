@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { TestResult } from "@/types/result";
+import { loadTest } from "@/lib/loadQuestions";
 
 export default function ResultPage() {
   const { testId } = useParams();
+  const { config } = loadTest(testId as string);
 
   const [result, setResult] = useState<TestResult | null>(null);
 
@@ -65,7 +67,7 @@ export default function ResultPage() {
             </h2>
 
             <p className="mt-3 text-5xl font-bold text-green-700">
-              {result.score}/{result.totalQuestions}
+              {result.score}/{config.totalQuestions}
             </p>
 
             <p className="mt-3 text-gray-600">
@@ -138,6 +140,55 @@ export default function ResultPage() {
           </div>
 
         </div>
+        {/* Test Details */}
+
+        <div className="mt-10 rounded-xl border bg-gray-50 p-6">
+
+          <h2 className="text-lg font-semibold">
+            Test Details
+          </h2>
+
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+
+            <div>
+              <p className="text-sm text-gray-500">
+                Duration
+              </p>
+              <p className="text-lg font-semibold">
+                {config.duration} minutes
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-500">
+                Total Questions
+              </p>
+              <p className="text-lg font-semibold">
+                {config.totalQuestions}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-500">
+                Marks per Correct Answer
+              </p>
+              <p className="text-lg font-semibold text-green-700">
+                +{config.marksPerCorrect}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-500">
+                Negative Marking
+              </p>
+              <p className="text-lg font-semibold text-red-700">
+                -{config.negativeMark}
+              </p>
+            </div>
+
+          </div>
+
+        </div>
 
         {/* Buttons */}
 
@@ -171,4 +222,4 @@ export default function ResultPage() {
       </div>
     </main>
   );
-}
+}  
