@@ -16,6 +16,7 @@ export default function MockTestPage() {
   const { testId } = useParams();
   const router = useRouter();
   const hasSubmitted = useRef(false);
+  const shouldClearOnExit = useRef(true);
   const { config, questions } = useMemo(() => {
     return loadTest(testId as string);
   }, [testId]);
@@ -62,18 +63,50 @@ export default function MockTestPage() {
     reviewQuestions,
     testId,
   ]);
+  useEffect(() => {
+    return () => {
+      if (shouldClearOnExit.current) {
+        localStorage.removeItem(`testProgress-${testId}`);
+        localStorage.removeItem("testStartTime");
+      }
+    };
+  }, [testId]);
+  useEffect(() => {
+    const handlePopState = () => {
+      const leave = window.confirm(
+        "Are you sure you want to exit the test?\n\nYour current progress will be lost."
+      );
+  
+      if (leave) {
+        shouldClearOnExit.current = true;
+      
+        window.removeEventListener("popstate", handlePopState);
+      
+        window.history.back();
+      } else {
+        window.history.pushState(null, "", window.location.href);
+      }
+    };
+  
+    // Create a history entry so Back triggers popstate
+    window.history.pushState(null, "", window.location.href);
+  
+    window.addEventListener("popstate", handlePopState);
+  
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
   const answeredCount = useMemo(
     () => Object.keys(answers).length,
     [answers]
   );
-
   const handleAnswerSelect = (optionIndex: number) => {
     setAnswers((prev) => ({
       ...prev,
       [question.id]: optionIndex,
     }));
   };
-
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion((prev) => prev - 1);
@@ -110,6 +143,7 @@ export default function MockTestPage() {
     if (hasSubmitted.current) return;
 
     hasSubmitted.current = true;
+    shouldClearOnExit.current = false;
     const startTime = Number(localStorage.getItem("testStartTime"));
   
     const endTime = Date.now();

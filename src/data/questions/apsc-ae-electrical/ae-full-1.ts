@@ -1,9 +1,9 @@
 import { Question } from "@/types/question";
 
 export const aeFull1Config = {
-  id: "ae-full-1",
+  examSlug: "apsc-ae-electrical",
 
-  title: "APSC AE Electrical Full Test 1",
+  title: "Full Length Test 1",
 
   totalQuestions: 20,
 

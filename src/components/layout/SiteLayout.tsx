@@ -11,8 +11,8 @@ export default function SiteLayout({
 }) {
   const pathname = usePathname();
 
-  const hideLayout = pathname.startsWith("/mock-test");
-
+  const hideLayout =
+  pathname?.startsWith("/mock-test") ?? false;
   if (hideLayout) {
     return <main className="min-h-screen">{children}</main>;
   }

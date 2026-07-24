@@ -11,36 +11,57 @@ export default function Timer({
   minutes,
   onTimeUp,
 }: TimerProps) {
+  const totalSeconds = minutes * 60;
+
   const getInitialTime = () => {
-    const totalSeconds = minutes * 60;
-  
     const startTime = localStorage.getItem("testStartTime");
-  
+
     if (!startTime) {
       return totalSeconds;
     }
-  
+
     const elapsed = Math.floor(
       (Date.now() - Number(startTime)) / 1000
     );
-  
+
     return Math.max(totalSeconds - elapsed, 0);
   };
-  
+
   const [timeLeft, setTimeLeft] = useState(getInitialTime);
 
   useEffect(() => {
-    if (timeLeft <= 0) {
-      onTimeUp?.();
-      return;
-    }
+    const updateTimer = () => {
+      const startTime = localStorage.getItem("testStartTime");
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
+      // Wait until MockTestPage has stored the start time.
+      if (!startTime) {
+        return;
+      }
 
-    return () => clearInterval(timer);
-  }, [timeLeft, onTimeUp]);
+      const elapsed = Math.floor(
+        (Date.now() - Number(startTime)) / 1000
+      );
+
+      const remaining = Math.max(totalSeconds - elapsed, 0);
+
+      setTimeLeft(remaining);
+
+      if (remaining <= 0) {
+        onTimeUp?.();
+      }
+    };
+
+    // Give MockTestPage one render cycle to create testStartTime.
+    const timeout = setTimeout(() => {
+      updateTimer();
+
+      const interval = setInterval(updateTimer, 1000);
+
+      return () => clearInterval(interval);
+    }, 50);
+
+    return () => clearTimeout(timeout);
+  }, [minutes, onTimeUp, totalSeconds]);
 
   const hours = Math.floor(timeLeft / 3600);
   const mins = Math.floor((timeLeft % 3600) / 60);
@@ -59,9 +80,7 @@ export default function Timer({
           : "bg-green-100 text-green-700"
       }`}
     >
-      <p className="text-sm font-medium">
-        Time Remaining
-      </p>
+      <p className="text-sm font-medium">Time Remaining</p>
 
       <p className="mt-1 text-3xl font-bold tracking-wider">
         {format(hours)}:{format(mins)}:{format(secs)}
